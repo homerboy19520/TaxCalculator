@@ -9,7 +9,7 @@
         :key="index"
         class="payments__item"
       >
-        <Checkbox :index="index" />
+        <Checkbox :index="index" :dataLength="deduction.length" />
         <div class="payments__wrapper">
           <p class="payments__price">
             {{ item.price }} рублей
@@ -82,6 +82,10 @@ export default {
     border-bottom-color: #dfe3e6;
     width: 100%;
     padding: 16px 0;
+
+    &:last-child input {
+      display: none;
+    }
   }
 
   &__wrapper {

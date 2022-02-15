@@ -1,7 +1,12 @@
 <template>
   <div class="checkbox">
-    <input class="checkbox__input" type="checkbox" :id="this.idAndFor" />
-    <label class="checkbox__label" :for="this.idAndFor"
+    <input
+      class="checkbox__input"
+      type="checkbox"
+      :id="this.id"
+      :checked="isChecked"
+    />
+    <label class="checkbox__label" :for="this.id"
       ><svg
         width="14"
         height="11"
@@ -27,11 +32,25 @@ export default {
       type: Number,
       required: true,
     },
+
+    dataLength: {
+      type: Number,
+      required: true,
+    },
   },
   data() {
     return {
-      idAndFor: this.index,
+      id: this.index,
     };
+  },
+
+  computed: {
+    isChecked() {
+      if (this.index === this.dataLength - 1) {
+        return false;
+      }
+      return true;
+    },
   },
 };
 </script>

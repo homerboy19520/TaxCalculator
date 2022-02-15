@@ -1,29 +1,36 @@
 <template>
   <div class="taxCalculator">
-    <Modal
-      @save-value="saveValue"
-      @click="recoupment"
-      @closeModal="close"
-      @send-index="setButton"
-      :modalContent="this.modalContent"
-      :buttonContent="this.buttonContent"
-      :deduction="this.deduction"
-      :inputContent="this.inputContent"
-      :isCalculation="this.isCalculation"
-    />
-    <transition name="hide">
-      <div class="taxCalculator__hero" v-show="isShow">
-        <div @click="hide">
-          <Button :content="this.buttonContent.hero" />
+    <div class="modal-wrapper" @mousedown.self="close">
+      <Modal
+        @save-value="saveValue"
+        @click="recoupment"
+        @closeModal="close"
+        @send-index="setButton"
+        :modalContent="this.modalContent"
+        :buttonContent="this.buttonContent"
+        :deduction="this.deduction"
+        :inputContent="this.inputContent"
+        :isCalculation="this.isCalculation"
+      />
+      <transition name="hide">
+        <div class="taxCalculator__hero" v-show="isShow">
+          <div @click="open">
+            <Button :content="this.buttonContent.hero" />
+          </div>
         </div>
-      </div>
-    </transition>
+      </transition>
+    </div>
   </div>
 </template>
 
 <script>
 import Modal from "@/components/modals/Modal";
 import Button from "@/components/Button";
+
+import { INPUT__CONTENT } from "@/helpers/const";
+import { BUTTON__CONTENT } from "@/helpers/const";
+import { MODAL__CONTENT } from "@/helpers/const";
+
 export default {
   name: "TaxCalculator",
   components: {
@@ -33,28 +40,9 @@ export default {
 
   data() {
     return {
-      modalContent: {
-        title: "Налоговый вычет",
-        subtitle:
-          "Используйте налоговый вычет чтобы погасить ипотеку досрочно. Размер налогового вычета составляет не более 13% от своего официального годового дохода.\n",
-        questionSalary: "Ваша зарплата в месяц",
-        questionReduce: "Что уменьшаем?",
-      },
-      buttonContent: {
-        radio: [
-          { content: "Платеж", active: false },
-          { content: "Срок", active: false },
-        ],
-        common: { content: "Добавить" },
-
-        hero: { content: "Налоговый вычет", modifier: "hero" },
-
-        calc: "Рассчитать",
-      },
-      inputContent: {
-        isError: false,
-        errorText: "Поле обязательно для заполнения",
-      },
+      modalContent: MODAL__CONTENT,
+      buttonContent: BUTTON__CONTENT,
+      inputContent: INPUT__CONTENT,
       isShow: true,
       isCalculation: false,
       deduction: [],
@@ -63,7 +51,7 @@ export default {
   },
 
   methods: {
-    hide: function () {
+    open: function () {
       this.isShow = false;
     },
 
@@ -77,12 +65,11 @@ export default {
     },
 
     recoupment: function () {
-      if (this.salary !== "" && this.salary > 12700) {
+      if (this.salary > 12700) {
         this.resetDeduction();
         if (this.salary > 270000) {
           this.deduction.push({ price: 270000 });
-          this.inputContent.isError = false;
-          this.isCalculation = true;
+          this.closeModals();
         } else {
           let sumOfValue = 0;
           while (this.formatSalary) {
@@ -92,12 +79,15 @@ export default {
               break;
             }
             this.deduction.push({ price: this.formatSalary });
-            this.inputContent.isError = false;
-            this.isCalculation = true;
+            this.closeModals();
           }
         }
+      } else if (this.salary === "" || this.salary === 0) {
+        this.inputContent.isError = true;
+        this.inputContent.errorText = "Поле обязательно для заполнения";
       } else {
         this.inputContent.isError = true;
+        this.inputContent.errorText = "Минимальная заработноя плата 12800";
       }
     },
 
@@ -109,6 +99,11 @@ export default {
       this.buttonContent.radio.forEach((item, indexOfButton) => {
         item.active = indexOfButton === index;
       });
+    },
+
+    closeModals() {
+      this.inputContent.isError = false;
+      this.isCalculation = true;
     },
   },
 
@@ -122,18 +117,9 @@ export default {
 
 <style lang="scss" scoped>
 .taxCalculator {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   position: relative;
   min-height: 100vh;
   background-color: #b3b3b3;
-  box-sizing: border-box;
-
-  @media (min-width: 500px) {
-    align-items: flex-start;
-  }
-
   &__hero {
     position: absolute;
     height: 100%;
@@ -171,6 +157,16 @@ export default {
       background-color: #fff;
       color: #000000;
     }
+  }
+}
+.modal-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+
+  @media (min-width: 500px) {
+    align-items: flex-start;
   }
 }
 

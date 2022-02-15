@@ -24,6 +24,7 @@ export default {
   data() {
     return {
       value: "",
+      numberValue: 0,
     };
   },
   methods: {
@@ -37,14 +38,19 @@ export default {
     },
     input(value) {
       this.value = this.formatValue(value);
-      console.log(this.formatValue(value));
+      console.log(this.toNumber);
+    },
+  },
+
+  computed: {
+    toNumber() {
+      return +this.value.split(" ").join("");
     },
   },
 
   watch: {
     value: function () {
-      console.log("я слежу");
-      this.$emit("send-event", this.value);
+      this.$emit("send-event", this.toNumber);
     },
   },
 };

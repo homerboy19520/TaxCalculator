@@ -2,25 +2,27 @@
   <div class="modal">
     <div class="modal__main">
       <div class="modal__wrapper">
-        <h1 class="modal__title">{{ this.modalText.title }}</h1>
+        <h1 class="modal__title">{{ this.modalContent.title }}</h1>
         <p class="modal__description">
-          {{ this.modalText.subtitle }}
+          {{ this.modalContent.subtitle }}
         </p>
       </div>
       <div class="modal__container">
-        <h2 class="modal__text">{{ this.modalText.questionSalary }}</h2>
+        <h2 class="modal__text">{{ this.modalContent.questionSalary }}</h2>
         <Input @send-event="saveSalary" :inputContent="this.inputContent" />
-        <ButtonText :content="this.buttonText.calc" @click="recoupment" />
+        <ButtonText :content="this.buttonContent.calc" @click="recoupment" />
       </div>
     </div>
     <div class="modal__payments-wrapper" v-if="isCalculation">
       <Payments :deduction="this.deduction" />
     </div>
     <div class="modal__question-wrapper">
-      <span class="modal__question">{{ this.modalText.questionReduce }}</span>
+      <span class="modal__question">{{
+        this.modalContent.questionReduce
+      }}</span>
       <div class="modal__box">
         <Tag
-          v-for="(item, index) in buttonText.radio"
+          v-for="(item, index) in buttonContent.radio"
           :index="index"
           :key="index"
           :state="item.active"
@@ -29,7 +31,7 @@
         />
       </div>
     </div>
-    <Button :content="this.buttonText.common" />
+    <Button :content="this.buttonContent.common" />
     <div class="modal__close-button" @click="closeModal">
       <svg
         width="12"
@@ -90,12 +92,6 @@ export default {
     },
   },
 
-  data() {
-    return {
-      modalText: this.modalContent,
-      buttonText: this.buttonContent,
-    };
-  },
   computed: {},
   methods: {
     saveSalary: function (value) {
