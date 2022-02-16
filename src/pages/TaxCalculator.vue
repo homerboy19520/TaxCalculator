@@ -1,21 +1,21 @@
 <template>
-  <div class="taxCalculator">
-    <div class="modal-wrapper" @mousedown.self="close">
+  <div class="taxCalculator" @keydown.esc="closeCalc">
+    <div class="modal-wrapper" @mousedown.self="closeCalc">
       <Modal
-        @save-value="saveValue"
+        @sendSalary="saveValue"
         @click="recoupment"
-        @closeModal="close"
-        @send-index="setButton"
-        :modalContent="this.modalContent"
-        :buttonContent="this.buttonContent"
+        @closeModal="closeCalc"
+        @send-index="switchButtons"
+        :modalContent="this.MODAL_CONTENT"
+        :buttonContent="this.BUTTON_CONTENT"
         :deduction="this.deduction"
-        :inputContent="this.inputContent"
+        :inputContent="this.INPUT_CONTENT"
         :isCalculation="this.isCalculation"
       />
       <transition name="hide">
         <div class="taxCalculator__hero" v-show="isShow">
-          <div @click="open">
-            <Button :content="this.buttonContent.hero" />
+          <div @click="hideHero">
+            <Button :content="this.BUTTON_CONTENT.hero" />
           </div>
         </div>
       </transition>
@@ -27,9 +27,9 @@
 import Modal from "@/components/modals/Modal";
 import Button from "@/components/Button";
 
-import { INPUT__CONTENT } from "@/helpers/const";
-import { BUTTON__CONTENT } from "@/helpers/const";
-import { MODAL__CONTENT } from "@/helpers/const";
+import { INPUT_CONTENT } from "@/helpers/const";
+import { BUTTON_CONTENT } from "@/helpers/const";
+import { MODAL_CONTENT } from "@/helpers/const";
 
 export default {
   name: "TaxCalculator",
@@ -40,9 +40,9 @@ export default {
 
   data() {
     return {
-      modalContent: MODAL__CONTENT,
-      buttonContent: BUTTON__CONTENT,
-      inputContent: INPUT__CONTENT,
+      MODAL_CONTENT,
+      BUTTON_CONTENT,
+      INPUT_CONTENT,
       isShow: true,
       isCalculation: false,
       deduction: [],
@@ -51,64 +51,75 @@ export default {
   },
 
   methods: {
-    open: function () {
+    hideHero() {
       this.isShow = false;
     },
 
-    close() {
+    closeCalc() {
       this.isShow = true;
       this.isCalculation = false;
+      this.INPUT_CONTENT.isError = false;
+      this.INPUT_CONTENT.errorText = "";
+      this.salary = "";
     },
 
     resetDeduction() {
       this.deduction = [];
     },
 
-    recoupment: function () {
+    recoupment() {
       if (this.salary > 12700) {
         this.resetDeduction();
-        if (this.salary > 270000) {
+        if (this.salary >= 270000) {
           this.deduction.push({ price: 270000 });
-          this.closeModals();
+          this.showPayments();
         } else {
           let sumOfValue = 0;
-          while (this.formatSalary) {
-            sumOfValue += this.formatSalary;
+          while (this.calcSalary) {
+            sumOfValue += this.calcSalary;
+
             if (sumOfValue > 270000) {
-              this.deduction.push({ price: sumOfValue - 270000 });
+              this.deduction.push({
+                price: this.calcSalary + 270000 - sumOfValue,
+              });
               break;
             }
-            this.deduction.push({ price: this.formatSalary });
-            this.closeModals();
+            this.deduction.push({ price: this.calcSalary });
+            this.showPayments();
           }
         }
       } else if (this.salary === "" || this.salary === 0) {
-        this.inputContent.isError = true;
-        this.inputContent.errorText = "Поле обязательно для заполнения";
+        this.variantError("Поле обязательно для заполнения");
+      } else if (isNaN(this.salary)) {
+        this.variantError("Введите число");
       } else {
-        this.inputContent.isError = true;
-        this.inputContent.errorText = "Минимальная заработноя плата 12800";
+        this.variantError("Минимальная заработноя плата 12800");
       }
     },
 
-    saveValue: function (value) {
+    variantError(text) {
+      this.INPUT_CONTENT.errorText = text;
+      this.INPUT_CONTENT.isError = true;
+    },
+
+    saveValue(value) {
       this.salary = value;
     },
 
-    setButton(index) {
-      this.buttonContent.radio.forEach((item, indexOfButton) => {
-        item.active = indexOfButton === index;
-      });
+    switchButtons(index) {
+      this.BUTTON_CONTENT.radio.forEach(
+        (item, i) => (item.active = i === index)
+      );
     },
 
-    closeModals() {
-      this.inputContent.isError = false;
+    showPayments() {
+      this.INPUT_CONTENT.isError = false;
       this.isCalculation = true;
     },
   },
 
   computed: {
-    formatSalary() {
+    calcSalary() {
       return this.salary * 12 * 0.13;
     },
   },

@@ -11,13 +11,9 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {};
-  },
-  computed: {},
 
   methods: {
-    click: function () {
+    click() {
       this.$emit("click");
     },
   },

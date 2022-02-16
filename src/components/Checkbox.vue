@@ -26,13 +26,11 @@
 <script>
 export default {
   name: "Checkbox",
-  components: {},
   props: {
     index: {
       type: Number,
       required: true,
     },
-
     dataLength: {
       type: Number,
       required: true,
@@ -46,10 +44,7 @@ export default {
 
   computed: {
     isChecked() {
-      if (this.index === this.dataLength - 1) {
-        return false;
-      }
-      return true;
+      return this.index !== this.dataLength - 1;
     },
   },
 };

@@ -9,15 +9,15 @@
         :key="index"
         class="payments__item"
       >
-        <Checkbox :index="index" :dataLength="deduction.length" />
-        <div class="payments__wrapper">
+        <label class="checkbox__wrapper" :for="index">
+          <Checkbox :index="index" :dataLength="deduction.length" />
           <p class="payments__price">
             {{ item.price }} рублей
             <span class="payments__price payments__price_year">
-              в {{ formatYear(index) }} год</span
+              в {{ formatEnd(index) }} год</span
             >
           </p>
-        </div>
+        </label>
       </li>
     </ul>
   </div>
@@ -25,6 +25,8 @@
 
 <script>
 import Checkbox from "@/components/Checkbox";
+import { formatEnd } from "@/helpers/utilits";
+
 export default {
   name: "Payments",
   components: { Checkbox },
@@ -40,16 +42,7 @@ export default {
     };
   },
   methods: {
-    formatYear(index) {
-      ++index;
-      if (index === 2 || index === 6 || index === 7 || index === 8) {
-        return `${index}-ой`;
-      } else if (index === 3) {
-        return `${index}-ий`;
-      } else {
-        return `${index}-ый`;
-      }
-    },
+    formatEnd,
   },
 };
 </script>
@@ -58,6 +51,7 @@ export default {
 .payments {
   display: flex;
   flex-direction: column;
+  width: 100%;
 
   &__title {
     font-weight: 500;
@@ -73,23 +67,18 @@ export default {
 
   &__list {
     list-style: none;
+    max-height: 232px;
+    overflow: hidden auto;
   }
 
   &__item {
-    display: flex;
-    gap: 11px;
     border: 1px solid transparent;
     border-bottom-color: #dfe3e6;
     width: 100%;
-    padding: 16px 0;
 
     &:last-child input {
       display: none;
     }
-  }
-
-  &__wrapper {
-    display: flex;
   }
 
   &__input {
@@ -141,5 +130,11 @@ export default {
       color: #808080;
     }
   }
+}
+.checkbox__wrapper {
+  display: flex;
+  gap: 11px;
+  cursor: pointer;
+  padding: 16px 0;
 }
 </style>

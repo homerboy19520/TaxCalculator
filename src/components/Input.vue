@@ -6,15 +6,16 @@
       type="text"
       :value="value"
       @input="input($event.target.value)"
+      v-on:keydown.enter="keydown"
     />
     <span class="input__text">{{ inputContent.errorText }}</span>
   </label>
 </template>
 
 <script>
+import { formatValue } from "@/helpers/utilits";
 export default {
   name: "Input",
-  components: {},
   props: {
     inputContent: {
       type: Object,
@@ -24,33 +25,28 @@ export default {
   data() {
     return {
       value: "",
-      numberValue: 0,
     };
   },
   methods: {
-    formatValue(value) {
-      if (value)
-        return value
-          .toString()
-          .replace(/\s+/g, "")
-          .replace(/(\d)(?=(\d{3})+$)/g, "$1 ");
-      return value;
-    },
     input(value) {
-      this.value = this.formatValue(value);
-      console.log(this.toNumber);
+      this.value = formatValue(value);
+    },
+
+    keydown() {
+      this.$emit("keydown");
     },
   },
 
   computed: {
-    toNumber() {
+    formatSalary() {
       return +this.value.split(" ").join("");
     },
   },
 
   watch: {
-    value: function () {
-      this.$emit("send-event", this.toNumber);
+    value() {
+      this.$emit("send-salary", this.formatSalary);
+      console.log("value изменяется");
     },
   },
 };
@@ -59,6 +55,20 @@ export default {
 <style lang="scss" scoped>
 .input {
   margin-bottom: 9px;
+  position: relative;
+  &::after {
+    content: "₽";
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translate(-17px, -17px);
+    font-family: LabGrotesque, Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 24px;
+    color: #000000;
+  }
   &__text {
     display: none;
     position: absolute;
@@ -98,7 +108,7 @@ export default {
   border: 1px solid #dfe3e6;
   box-sizing: border-box;
   border-radius: 3px;
-  padding: 7px 10px;
+  padding: 7px 40px 7px 10px;
   transition: border-color 0.2s ease-out;
   font-family: LabGrotesque, Helvetica, Arial, sans-serif;
   font-size: 14px;

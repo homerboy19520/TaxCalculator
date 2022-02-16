@@ -9,7 +9,11 @@
       </div>
       <div class="modal__container">
         <h2 class="modal__text">{{ this.modalContent.questionSalary }}</h2>
-        <Input @send-event="saveSalary" :inputContent="this.inputContent" />
+        <Input
+          @send-salary="sendSalary"
+          :inputContent="this.inputContent"
+          @keydown="recoupment"
+        />
         <ButtonText :content="this.buttonContent.calc" @click="recoupment" />
       </div>
     </div>
@@ -27,7 +31,7 @@
           :key="index"
           :state="item.active"
           :content="item.content"
-          @send-event="setButton"
+          @send-index="sendIndex"
         />
       </div>
     </div>
@@ -92,17 +96,16 @@ export default {
     },
   },
 
-  computed: {},
   methods: {
-    saveSalary: function (value) {
-      this.$emit("save-value", value);
+    sendSalary: function (value) {
+      this.$emit("sendSalary", value);
     },
 
     recoupment: function () {
       this.$emit("click");
     },
 
-    setButton(index) {
+    sendIndex(index) {
       this.$emit("send-index", index);
     },
 
@@ -133,7 +136,7 @@ export default {
     border-radius: 30px;
     height: fit-content;
     padding: 32px;
-    margin: 120px 0;
+    margin-top: 120px;
   }
 
   @media (min-width: 1000px) {

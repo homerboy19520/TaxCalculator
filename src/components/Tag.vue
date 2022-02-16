@@ -22,16 +22,10 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      indexElement: this.index,
-    };
-  },
-  computed: {},
 
   methods: {
-    click: function () {
-      this.$emit("send-event", this.indexElement);
+    click() {
+      this.$emit("send-index", this.index);
     },
   },
 };

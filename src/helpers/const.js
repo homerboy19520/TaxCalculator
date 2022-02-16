@@ -1,4 +1,4 @@
-export const MODAL__CONTENT = {
+export const MODAL_CONTENT = {
   title: "Налоговый вычет",
   subtitle:
     "Используйте налоговый вычет чтобы погасить ипотеку досрочно. Размер налогового вычета составляет не более 13% от своего официального годового дохода.\n",
@@ -6,19 +6,19 @@ export const MODAL__CONTENT = {
   questionReduce: "Что уменьшаем?",
 };
 
-export const BUTTON__CONTENT = {
+export const BUTTON_CONTENT = {
   radio: [
     { content: "Платеж", active: true },
     { content: "Срок", active: false },
   ],
-  common: { content: "Добавить" },
+  common: { content: "Добавить", variant: "primary" },
 
-  hero: { content: "Налоговый вычет", modifier: "hero" },
+  hero: { content: "Налоговый вычет", variant: "secondary" },
 
   calc: "Рассчитать",
 };
 
-export const INPUT__CONTENT = {
+export const INPUT_CONTENT = {
   isError: false,
   errorText: "",
 };
