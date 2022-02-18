@@ -9,15 +9,22 @@
         :key="index"
         class="payments__item"
       >
-        <label class="checkbox__wrapper" :for="index">
-          <Checkbox :index="index" :dataLength="deduction.length" />
-          <p class="payments__price">
-            {{ item.price }} рублей
-            <span class="payments__price payments__price_year">
-              в {{ formatEnd(index) }} год</span
-            >
-          </p>
-        </label>
+        <div>
+          <Checkbox
+            :price="item.price"
+            :isChecked="isChecked(index, deduction)"
+            :index="index"
+            :dataLength="deduction.length"
+            @click="click"
+          >
+            <p class="payments__price">
+              {{ formatValue(item.price) }} рублей
+              <span class="payments__price payments__price_year">
+                в {{ formatEnd(index) }} год</span
+              >
+            </p>
+          </Checkbox>
+        </div>
       </li>
     </ul>
   </div>
@@ -25,24 +32,37 @@
 
 <script>
 import Checkbox from "@/components/Checkbox";
-import { formatEnd } from "@/helpers/utilits";
+
+import { formatEnd, formatValue } from "@/helpers/utils";
 
 export default {
   name: "Payments",
+
   components: { Checkbox },
+
   props: {
     deduction: {
       type: Array,
       required: true,
     },
   },
+
   data() {
     return {
       title: "Итого можете внести в качестве досрочных:",
     };
   },
+
   methods: {
     formatEnd,
+    formatValue,
+    isChecked(index, deduction) {
+      return index !== deduction.length - 1;
+    },
+
+    click() {
+      this.$emit("click");
+    },
   },
 };
 </script>
@@ -130,11 +150,5 @@ export default {
       color: #808080;
     }
   }
-}
-.checkbox__wrapper {
-  display: flex;
-  gap: 11px;
-  cursor: pointer;
-  padding: 16px 0;
 }
 </style>

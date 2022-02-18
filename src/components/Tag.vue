@@ -1,5 +1,5 @@
 <template>
-  <div class="tag" :class="{ 'm-active': state }" @click="click">
+  <div class="tag" :class="{ 'm-active': isActive }">
     {{ content }}
   </div>
 </template>
@@ -13,19 +13,9 @@ export default {
       type: String,
       required: true,
     },
-    state: {
+    isActive: {
       type: Boolean,
       required: true,
-    },
-    index: {
-      type: Number,
-      required: true,
-    },
-  },
-
-  methods: {
-    click() {
-      this.$emit("send-index", this.index);
     },
   },
 };
@@ -43,6 +33,7 @@ export default {
   border-radius: 50px;
   cursor: pointer;
   transition: background-color 0.2s ease-out, color 0.1s ease-out;
+  user-select: none;
 
   &:hover {
     background-color: #dfe3e6;

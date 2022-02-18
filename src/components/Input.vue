@@ -4,7 +4,7 @@
       class="input"
       placeholder="Введите данные"
       type="text"
-      :value="value"
+      :value="valueLocal"
       @input="input($event.target.value)"
       v-on:keydown.enter="keydown"
     />
@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { formatValue } from "@/helpers/utilits";
+import { formatValue } from "@/helpers/utils";
 export default {
   name: "Input",
   props: {
@@ -21,15 +21,19 @@ export default {
       type: Object,
       required: true,
     },
+    value: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
-      value: "",
+      valueLocal: "",
     };
   },
   methods: {
     input(value) {
-      this.value = formatValue(value);
+      this.valueLocal = formatValue(value);
     },
 
     keydown() {
@@ -39,14 +43,20 @@ export default {
 
   computed: {
     formatSalary() {
-      return +this.value.split(" ").join("");
+      return this.valueLocal.split(" ").join("");
     },
+  },
+
+  mounted() {
+    this.valueLocal = formatValue(this.value);
   },
 
   watch: {
     value() {
-      this.$emit("send-salary", this.formatSalary);
-      console.log("value изменяется");
+      this.valueLocal = formatValue(this.value);
+    },
+    valueLocal() {
+      this.$emit("onInput", this.formatSalary);
     },
   },
 };
@@ -76,7 +86,7 @@ export default {
     font-size: 10px;
     line-height: 12px;
     color: #ea0029;
-    top: 80px;
+    top: 45px;
   }
 
   &.m-error {

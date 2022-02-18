@@ -1,35 +1,39 @@
 <template>
-  <div class="taxCalculator" @keydown.esc="closeCalc">
-    <div class="modal-wrapper" @mousedown.self="closeCalc">
-      <Modal
-        @sendSalary="saveValue"
-        @click="recoupment"
-        @closeModal="closeCalc"
-        @send-index="switchButtons"
-        :modalContent="this.MODAL_CONTENT"
-        :buttonContent="this.BUTTON_CONTENT"
-        :deduction="this.deduction"
-        :inputContent="this.INPUT_CONTENT"
-        :isCalculation="this.isCalculation"
-      />
-      <transition name="hide">
-        <div class="taxCalculator__hero" v-show="isShow">
-          <div @click="hideHero">
-            <Button :content="this.BUTTON_CONTENT.hero" />
-          </div>
+  <div
+    class="taxCalculator"
+    @keydown.esc="closeCalc"
+    v-body-scroll-lock="isShow"
+  >
+    <transition name="hide">
+      <div v-show="!isShow" class="modal-wrapper" @mousedown.self="closeCalc">
+        <Modal
+          :modalContent="this.MODAL_CONTENT"
+          :buttonContent="this.BUTTON_CONTENT"
+          :deduction="this.deduction"
+          :inputContent="this.INPUT_CONTENT"
+          :isCalculation="this.isCalculation"
+          :value="salary"
+          @onInput="saveSalary"
+          @onCalc="calcDeduction"
+          @onModal="closeCalc"
+          @onSwitch="switchButtons"
+        />
+      </div>
+    </transition>
+    <transition name="hide">
+      <div class="taxCalculator__hero" v-show="isShow">
+        <div @click="hideHero">
+          <Button :content="this.BUTTON_CONTENT.hero" />
         </div>
-      </transition>
-    </div>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script>
 import Modal from "@/components/modals/Modal";
 import Button from "@/components/Button";
-
-import { INPUT_CONTENT } from "@/helpers/const";
-import { BUTTON_CONTENT } from "@/helpers/const";
-import { MODAL_CONTENT } from "@/helpers/const";
+import { INPUT_CONTENT, BUTTON_CONTENT, MODAL_CONTENT } from "@/helpers/const";
 
 export default {
   name: "TaxCalculator",
@@ -67,24 +71,24 @@ export default {
       this.deduction = [];
     },
 
-    recoupment() {
-      if (this.salary > 12700) {
+    calcDeduction() {
+      if (this.salary >= 12700) {
         this.resetDeduction();
-        if (this.salary >= 270000) {
-          this.deduction.push({ price: 270000 });
+        if (this.salary >= 260000) {
+          this.deduction.push({ price: 260000 });
           this.showPayments();
         } else {
           let sumOfValue = 0;
           while (this.calcSalary) {
             sumOfValue += this.calcSalary;
 
-            if (sumOfValue > 270000) {
+            if (sumOfValue > 260000) {
               this.deduction.push({
-                price: this.calcSalary + 270000 - sumOfValue,
+                price: (this.calcSalary + 260000 - sumOfValue).toFixed(),
               });
               break;
             }
-            this.deduction.push({ price: this.calcSalary });
+            this.deduction.push({ price: this.calcSalary.toFixed() });
             this.showPayments();
           }
         }
@@ -93,7 +97,7 @@ export default {
       } else if (isNaN(this.salary)) {
         this.variantError("Введите число");
       } else {
-        this.variantError("Минимальная заработноя плата 12800");
+        this.variantError("Минимальная заработноя плата 12700");
       }
     },
 
@@ -102,7 +106,7 @@ export default {
       this.INPUT_CONTENT.isError = true;
     },
 
-    saveValue(value) {
+    saveSalary(value) {
       this.salary = value;
     },
 
@@ -131,8 +135,14 @@ export default {
   position: relative;
   min-height: 100vh;
   background-color: #b3b3b3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   &__hero {
     position: absolute;
+    top: 0;
+    left: 0;
     height: 100%;
     max-height: 100vh;
     width: 100%;

@@ -1,5 +1,5 @@
 <template>
-  <button class="button" :class="[`m-${this.content.variant}`]">
+  <button class="button" :class="[`m-${this.content.variant}`]" @click="click">
     {{ this.content.content }}
   </button>
 </template>
@@ -11,6 +11,11 @@ export default {
     content: {
       type: Object,
       required: true,
+    },
+  },
+  methods: {
+    click() {
+      this.$emit("click");
     },
   },
 };

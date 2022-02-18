@@ -1,50 +1,56 @@
 <template>
-  <div class="checkbox">
-    <input
-      class="checkbox__input"
-      type="checkbox"
-      :id="this.id"
-      :checked="isChecked"
-    />
-    <label class="checkbox__label" :for="this.id"
-      ><svg
-        width="14"
-        height="11"
-        viewBox="0 0 14 11"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M4.45455 8.70149L1.11364 5.25373L0 6.40299L4.45455 11L14 1.14925L12.8864 0L4.45455 8.70149Z"
-          fill="white"
-        />
-      </svg>
-    </label>
-  </div>
+  <label class="checkbox">
+    <span class="checkbox__wrapper">
+      <input
+        class="checkbox__input"
+        type="checkbox"
+        v-model="isCheckedLocal"
+        @click="onInput"
+      />
+      <div class="checkbox__container">
+        <svg
+          width="14"
+          height="11"
+          viewBox="0 0 14 11"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M4.45455 8.70149L1.11364 5.25373L0 6.40299L4.45455 11L14 1.14925L12.8864 0L4.45455 8.70149Z"
+            fill="white"
+          />
+        </svg>
+      </div>
+      <slot></slot>
+    </span>
+  </label>
 </template>
 
 <script>
 export default {
   name: "Checkbox",
   props: {
-    index: {
-      type: Number,
-      required: true,
-    },
-    dataLength: {
-      type: Number,
-      required: true,
+    isChecked: {
+      type: Boolean,
+      default: true,
     },
   },
   data() {
     return {
-      id: this.index,
+      isCheckedLocal: true,
     };
   },
-
-  computed: {
+  methods: {
+    onInput() {
+      this.$emit("onInput", this.state);
+    },
+  },
+  mounted() {
+    this.isCheckedLocal = this.isChecked;
+  },
+  watch: {
     isChecked() {
-      return this.index !== this.dataLength - 1;
+      this.isCheckedLocal = this.isChecked;
     },
   },
 };
@@ -52,9 +58,15 @@ export default {
 
 <style lang="scss" scoped>
 .checkbox {
+  &__wrapper {
+    display: flex;
+    gap: 11px;
+    cursor: pointer;
+    padding: 16px 0;
+  }
   &__input {
     display: none;
-    &:checked + .checkbox__label {
+    &:checked + .checkbox__container {
       border-color: transparent;
       background: linear-gradient(
           255.35deg,
@@ -64,12 +76,12 @@ export default {
         #ff5e56;
     }
 
-    &:checked + .checkbox__label svg {
+    &:checked + .checkbox__container svg {
       display: block;
     }
   }
 
-  &__label {
+  &__container {
     display: flex;
     justify-content: center;
     align-items: center;

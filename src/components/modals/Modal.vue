@@ -10,33 +10,33 @@
       <div class="modal__container">
         <h2 class="modal__text">{{ this.modalContent.questionSalary }}</h2>
         <Input
-          @send-salary="sendSalary"
           :inputContent="this.inputContent"
-          @keydown="recoupment"
+          :value="value"
+          @onInput="onInput"
+          @keydown="onCalc"
         />
-        <ButtonText :content="this.buttonContent.calc" @click="recoupment" />
+        <ButtonText :content="this.buttonContent.calc" @click="onCalc" />
       </div>
     </div>
     <div class="modal__payments-wrapper" v-if="isCalculation">
-      <Payments :deduction="this.deduction" />
+      <Payments :deduction="this.deduction" @click="onCheckbox" />
     </div>
     <div class="modal__question-wrapper">
       <span class="modal__question">{{
         this.modalContent.questionReduce
       }}</span>
       <div class="modal__box">
-        <Tag
+        <div
           v-for="(item, index) in buttonContent.radio"
-          :index="index"
           :key="index"
-          :state="item.active"
-          :content="item.content"
-          @send-index="sendIndex"
-        />
+          @click="onSwitch(index)"
+        >
+          <Tag :isActive="item.active" :content="item.content" />
+        </div>
       </div>
     </div>
-    <Button :content="this.buttonContent.common" />
-    <div class="modal__close-button" @click="closeModal">
+    <Button :content="this.buttonContent.common" @click="onButton" />
+    <div class="modal__close-button" @click="onModal">
       <svg
         width="12"
         height="12"
@@ -94,23 +94,35 @@ export default {
       type: Boolean,
       required: true,
     },
+    value: {
+      type: String,
+      required: true,
+    },
   },
 
   methods: {
-    sendSalary: function (value) {
-      this.$emit("sendSalary", value);
+    onInput(value) {
+      this.$emit("onInput", value);
     },
 
-    recoupment: function () {
-      this.$emit("click");
+    onCalc() {
+      this.$emit("onCalc");
     },
 
-    sendIndex(index) {
-      this.$emit("send-index", index);
+    onSwitch(index) {
+      this.$emit("onSwitch", index);
     },
 
-    closeModal() {
-      this.$emit("closeModal");
+    onModal() {
+      this.$emit("onModal");
+    },
+
+    onButton() {
+      this.$emit("onButton");
+    },
+
+    onCheckbox() {
+      this.$emit("onCheckbox");
     },
   },
 };
@@ -136,7 +148,6 @@ export default {
     border-radius: 30px;
     height: fit-content;
     padding: 32px;
-    margin-top: 120px;
   }
 
   @media (min-width: 1000px) {
