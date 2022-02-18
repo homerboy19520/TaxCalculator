@@ -2,10 +2,10 @@
   <div
     class="taxCalculator"
     @keydown.esc="closeCalc"
-    v-body-scroll-lock="isShow"
+    @mousedown.self="closeCalc"
   >
     <transition name="hide">
-      <div v-show="!isShow" class="modal-wrapper" @mousedown.self="closeCalc">
+      <div v-show="!isShow" class="modal-wrapper">
         <Modal
           :modalContent="this.MODAL_CONTENT"
           :buttonContent="this.BUTTON_CONTENT"
